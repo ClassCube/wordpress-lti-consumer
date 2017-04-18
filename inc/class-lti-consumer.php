@@ -269,6 +269,9 @@ class LTI_Consumer {
             'tool_consumer_info_version' => get_bloginfo( 'version' ),
             'tool_consumer_instance_url' => get_permalink( $post ),
             'tool_consumer_instance_name' => get_bloginfo( 'name' ),
+            
+            // Strip https? in case they change later
+            'tool_consumer_instance_guid' => preg_replace('/^https?:\/\//i', '', get_bloginfo( 'home' ) ),
             'classcube_version' => $plugin_data[ 'Version' ],
             'classcube_info' => 'https://classcube.com',
             'oauth_nonce' => md5( uniqid( '', true ) ),
@@ -292,14 +295,10 @@ class LTI_Consumer {
         if ( !empty( $tool[ 'custom_parameters' ] ) ) {
             $params = explode( "\n", trim( $tool[ 'custom_parameters' ] ) );
             foreach ( $params as $param ) {
-                $param = explode( "=", trim($param) );
+                $param = explode( "=", trim( $param ) );
                 $post_data[ 'custom_' . $param[ 0 ] ] = $param[ 1 ];
             }
         }
-
-        //ksort( $post_data );
-
-        //$post_data[ 'oauth_signature' ] = self::generate_hmac_signature( $post_data, $tool[ 'shared_secret' ], $launch_url );
 
         $consumer = new OAuthConsumer( $tool[ 'consumer_key' ], $tool[ 'shared_secret' ], 'about:blank' );
         $oauth_request = OAuthRequest::from_consumer_and_token(
@@ -307,9 +306,8 @@ class LTI_Consumer {
         $oauth_request->sign_request(
                 new OAuthSignatureMethod_HMAC_SHA1(), $consumer, null );
         $params = $oauth_request->get_parameters();
-        echo '<pre>' . print_r( $params, true ) . '</pre>';
         ?>
-        <form action="<?php echo $_GET[ 'launch' ]; ?>" method="POST">
+        <form id="cc-launch" action="<?php echo $_GET[ 'launch' ]; ?>" method="POST">
             <?php
             foreach ( $params as $k => $v ) {
                 echo '<input type="hidden" name="' . $k . '" value="' . $v . '">';
@@ -317,6 +315,9 @@ class LTI_Consumer {
             ?>
             <input type="submit" value="<?php _e( 'Launch Tool', 'cc-lti' ); ?>">
         </form>
+        <script type="text/javascript">
+            document.getElementById('cc-launch').submit(); 
+        </script>
         <?php
     }
 
