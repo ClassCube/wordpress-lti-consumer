@@ -312,13 +312,18 @@ class LTI_Consumer {
                 new OAuthSignatureMethod_HMAC_SHA1(), $consumer, null );
         $params = $oauth_request->get_parameters();
         ?>
+        <noscript>
+        <style>
+            input { visibility: visible !important; }
+        </style>
+        </noscript>
         <form id="cc-launch" action="<?php echo $_GET[ 'launch' ]; ?>" method="POST">
             <?php
             foreach ( $params as $k => $v ) {
                 echo '<input type="hidden" name="' . $k . '" value="' . $v . '">';
             }
             ?>
-            <input type="submit" value="<?php _e( 'Launch Tool', 'cc-lti' ); ?>">
+            <input type="submit" style="visibility: hidden;"  value="<?php _e( 'Launch Tool', 'cc-lti' ); ?>">
         </form>
         <script type="text/javascript">
             document.getElementById('cc-launch').submit();
