@@ -15,6 +15,7 @@ $tools = get_option( 'classcube-lti-tools', [ ] );
             _e( 'View Tool', 'cc-lti' );
             if ( isset( $tools[ $_GET[ 'view' ] ] ) ) {
                 echo ' <a class="page-title-action" href="' . admin_url( 'admin.php?page=cc-lti&edit=' . $_GET[ 'view' ] ) . '">' . __( 'Edit', 'cc-lti' ) . '</a>';
+                
             }
             ?>
         </h1>
