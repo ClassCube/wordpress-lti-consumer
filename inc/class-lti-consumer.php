@@ -321,7 +321,7 @@ class LTI_Consumer {
             <input type="submit" value="<?php _e( 'Launch Tool', 'cc-lti' ); ?>">
         </form>
         <script type="text/javascript">
-            //document.getElementById('cc-launch').submit();
+            document.getElementById('cc-launch').submit();
         </script>
         <?php
     }
