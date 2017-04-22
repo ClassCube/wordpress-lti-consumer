@@ -238,7 +238,7 @@ class LTI_Consumer {
             'css_style' => self::get_setting( 'css_style' )
                 ], $atts );
 
-        $html = '<iframe style="' . $atts[ 'css_style' ] . '" class="' . $atts[ 'css_class' ] . '" src="' . admin_url( 'admin-post.php?action=cc-lti-launch&tool=' . $tool[ 'id' ] . '&launch=' . urlencode( $atts[ 'url' ] ) ) . '&p=' . $post->ID . '"></iframe>';
+        $html = '<iframe style="' . $atts[ 'css_style' ] . '" class="' . $atts[ 'css_class' ] . '" src="' . admin_url( 'admin-post.php?action=cc-lti-launch&tool=' . $tool[ 'id' ] . '&launch=' . urlencode( $atts[ 'url' ] ) ) . '&p=' . $post->ID . '" ' . ($atts['allow_fullscreen'] ? 'allowfullscreen' : '') . '></iframe>';
 
         return $html;
     }
@@ -329,6 +329,8 @@ class LTI_Consumer {
             document.getElementById('cc-launch').submit();
         </script>
         <?php
+        
+        die(); 
     }
 
     private static function generate_hmac_signature( $post_data, $secret, $launch_url ) {
