@@ -7,7 +7,7 @@ $tools = get_option( 'classcube-lti-tools', [ ] );
 ?>
 <div class="wrap">
     <div class="cc-links">
-        <?php include(__DIR__.'/admin-links.php'); ?>
+        <?php include(__DIR__ . '/admin-links.php'); ?>
     </div>
     <div class="cc-body">
         <h1>
@@ -47,6 +47,10 @@ $tools = get_option( 'classcube-lti-tools', [ ] );
                 <tr>
                     <th><?php _e( 'Custom Parameters', 'cc-lti' ); ?></th>
                     <td><?php echo nl2br( $tool[ 'custom_parameters' ] ); ?></td>
+                </tr>
+                <tr>
+                    <th><?php _e( 'Require Login', 'cc-lti' ); ?></th>
+                    <td><?php echo $tool[ 'require_login' ] ? 'Yes' : 'No'; ?></td>
                 </tr>
                 <tr>
                     <th><?php _e( 'Share Username', 'cc-lti' ); ?></th>

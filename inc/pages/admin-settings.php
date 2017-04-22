@@ -39,6 +39,12 @@ if ( isset( $_POST[ 'cc-submitted' ] ) ) {
                         <input type="checkbox" name="cc-share-username" <?php checked( self::get_setting( 'share_username' ), true, true ); ?>>
                     </td>
                 </tr>
+                <tr>
+                    <th><?php _e('Require Login', 'cc-lti'); ?></th>
+                    <td>
+                        <input type="checkbox" name="cc-require-login" <?php checked(self::get_setting('require_login'), true, true); ?>>
+                    </td>
+                </tr>
             </table>
 
             <h3><?php _e( 'Frame Settings', 'cc-lti' ); ?></h3>

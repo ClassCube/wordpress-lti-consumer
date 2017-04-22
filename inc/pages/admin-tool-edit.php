@@ -20,11 +20,11 @@ else {
     $tool[ 'custom_parameters' ] = '';
     $tool[ 'share_username' ] = self::get_setting( 'share_username' );
     $tool[ 'share_email' ] = self::get_setting( 'share_email' );
+    $tool[ 'require_login' ] = self::get_setting( 'require_login' );
     $tool[ 'id' ] = '';
 
     $page_header = __( 'Add new LTI tool', 'cc-lti' );
 }
-
 ?>
 <div class="wrap">
     <div class="cc-links">
@@ -71,6 +71,12 @@ else {
                     </td>
                 </tr>
                 <tr>
+                    <th><?php _e('Require Login', 'cc-lti'); ?></th>
+                    <td>
+                        <input type="checkbox" name="cc-require-login" <?php checked($tool['require_login'], true, true); ?>>
+                    </td>
+                </tr>
+                <tr>
                     <th><?php _e( 'Share Username', 'cc-lti' ); ?></th>
                     <td>
                         <input type="checkbox" name="cc-share-username" <?php checked( $tool[ 'share_username' ], true, true ); ?>>
@@ -85,7 +91,7 @@ else {
             </table>
             <input type="submit" class="button button-primary" value="<?php _e( 'Add Tool', 'cc-lti' ); ?>">
             <input type="hidden" name="action" value="add_tool">
-            <input type="hidden" name="cc-id" value="<?php echo esc_attr($tool['id']); ?>">
+            <input type="hidden" name="cc-id" value="<?php echo esc_attr( $tool[ 'id' ] ); ?>">
         </form>
     </div>
 </div>

@@ -18,7 +18,8 @@ class LTI_Consumer {
         'share_username' => true,
         'css_class' => '',
         'css_style' => 'border:none;width:100%;height:400px;',
-        'allow_fullscreen' => true
+        'allow_fullscreen' => true,
+        'require_login' => true
     ];
     private static $tools = false;
 
@@ -36,6 +37,7 @@ class LTI_Consumer {
 
         add_shortcode( 'lti', '\ClassCube\LTI_Consumer::shortcode' );
         add_action( 'admin_post_cc-lti-launch', '\ClassCube\LTI_Consumer::lti_launch' );
+        add_action( 'admin_post_nopriv_cc-lti-launch', '\ClassCube\LTI_Consumer::lti_launch' );
     }
 
     /**
@@ -91,6 +93,7 @@ class LTI_Consumer {
         self::update_setting( 'css_class', $_POST[ 'cc-css-class' ], true );
         self::update_setting( 'css_style', $_POST[ 'cc-css-style' ], true );
         self::update_setting( 'allow_fullscreen', !empty( $_POST[ 'cc-allow-fullscreen' ] ), false );
+        self::update_setting( 'require_login', !empty( $_POST[ 'cc-require-login' ] ) );
     }
 
     /**
@@ -141,6 +144,7 @@ class LTI_Consumer {
             'custom_parameters' => $_POST[ 'cc-custom-parameters' ],
             'share_username' => !empty( $_POST[ 'cc-share-username' ] ),
             'share_email' => !empty( $_POST[ 'cc-share-email' ] ),
+            'require_login' => !empty( $_POST[ 'cc-require-login' ] ),
             'id' => $_POST[ 'cc-id' ]
         ];
 
@@ -211,7 +215,13 @@ class LTI_Consumer {
 
     public static function shortcode( $atts = [ ] ) {
         global $post;
-        if ( !is_user_logged_in() ) {
+
+        $tool = self::find_tool( $atts[ 'url' ] );
+        if ( $tool === false ) {
+            return sprintf( __( '%s not found in registered LTI tools', 'cc-lti' ), $atts[ 'url' ] );
+        }
+
+        if ( !empty( $tool[ 'require_login' ] ) && !is_user_logged_in() ) {
             return __( 'You must be logged in to launch an LTI tool', 'cc-lti' );
         }
 
@@ -219,10 +229,7 @@ class LTI_Consumer {
             return __( 'URL is required for the LTI short code', 'cc-lti' );
         }
 
-        $tool = self::find_tool( $atts[ 'url' ] );
-        if ( $tool === false ) {
-            return sprintf( __( '%s not found in registered LTI tools', 'cc-lti' ), $atts[ 'url' ] );
-        }
+
 
         $atts = shortcode_atts( [
             'url' => '',
@@ -252,26 +259,24 @@ class LTI_Consumer {
         $current_user = wp_get_current_user();
         $post = get_post( $_GET[ 'p' ] );
         $plugin_data = get_plugin_data( self::$base_path . '/classcube-lti-consumer.php' );
-
         $post_data = [
             'lti_message_type' => 'basic-lti-launch-request',
             'lti_version' => 'LTI-1p0',
-            'lis_person_sourcedid' => $current_user->user_login,
+            'lis_person_sourcedid' => !empty( $current_user->user_login ) ? $current_user->user_login : '',
             'resource_link_id' => $post->ID,
             'resource_link_title' => $post->post_title,
             'resource_link_description' => $post->post_title,
             'context_title' => get_bloginfo( 'name' ),
             'context_id' => get_bloginfo( 'home' ),
             'roles' => 'Learner',
-            'user_id' => md5( get_bloginfo( 'home' ) . $current_user->ID ),
+            'user_id' => md5( get_bloginfo( 'home' ) . !empty( $current_user->ID ) ? $current_user->ID : 0  ),
             'launch_presentation_locale' => get_locale(),
             'tool_consumer_info_product_family_code' => 'wordpress',
             'tool_consumer_info_version' => get_bloginfo( 'version' ),
             'tool_consumer_instance_url' => get_permalink( $post ),
             'tool_consumer_instance_name' => get_bloginfo( 'name' ),
-            
             // Strip https? in case they change later
-            'tool_consumer_instance_guid' => preg_replace('/^https?:\/\//i', '', get_bloginfo( 'home' ) ),
+            'tool_consumer_instance_guid' => preg_replace( '/^https?:\/\//i', '', get_bloginfo( 'home' ) ),
             'classcube_version' => $plugin_data[ 'Version' ],
             'classcube_info' => 'https://classcube.com',
             'oauth_nonce' => md5( uniqid( '', true ) ),
@@ -316,7 +321,7 @@ class LTI_Consumer {
             <input type="submit" value="<?php _e( 'Launch Tool', 'cc-lti' ); ?>">
         </form>
         <script type="text/javascript">
-            document.getElementById('cc-launch').submit(); 
+            //document.getElementById('cc-launch').submit();
         </script>
         <?php
     }
