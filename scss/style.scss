@@ -3,9 +3,27 @@
 .cc-links {
     float: right; 
     width: 250px;
+
+    .cc-social {
+        text-align:center;
+        a {
+            opacity: 0.25;
+            text-decoration:none; 
+            margin: {
+                left: 8px;
+                right: 8px; 
+            }
+            &:hover {
+                opacity: 1.0; 
+            }
+        }
+    }
+
 }
 
 /* Left side of page with room for the links block */
 .cc-body {
     margin-right: 275px;
+
+
 }
