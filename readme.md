@@ -1,14 +1,28 @@
 ## WordPress LTI Consumer Plugin
-This will eventually be a plugin for WordPress that will let you turn your
-WordPress site into an LTI Consumer.
-
-For now, it's not totally working so you're probably going to want to hang
-on just a bit before downloading and giving it a try. You could go ahead and
-click the Star icon and keep up to date. 
+A very small and simple plugin that will turn your WordPress site into an [LTI Consumer](https://www.imsglobal.org/activity/learning-tools-interoperability). 
 
 ### Installation
 
+This may install a bit differently than you're used to since it's not coming from the WordPress plugins library. You'll need to download a zip file and install it manually. 
+
+First, grab the most recent zip file from [Releases](https://github.com/ClassCube/wordpress-lti-consumer/releases) and download it to your computer. 
+
+Login to your WordPress site and go to the Plugins menu. You're looking for the Add button.
+
+![Add Button](img/screenshots/plugins-menu.png)
+
+After you click Add you'll bounce to the list of plugins that you can install. Normally you'd search for a plugin in the library and install it that way. But this time you'll need to click on the Upload Plugin button.
+
+![Upload Plugin Button](img/screenshots/plugins-add.png)
+
+And then you'll go to a screen where you can upload the zip file. Go ahead and upload it. Then you'll be able to active this plugin just like any other.
+
+![Upload Plugin](img/screenshots/plugins-upload.png)
+
+
+
 ### Settings
+
 Once installed and activated you should see a new menu item labeled LTI Consumer.
 
 ![WordPress Menu](img/screenshots/wordpress-menu.png)
@@ -21,42 +35,16 @@ something like this.
 The first three options are defaults for new tools, but can be overridden when
 you create a new tool.
 
-**Share Email / Share Name**
+| Setting          | Notes                                    |
+| ---------------- | ---------------------------------------- |
+| Share Email      | If enabled the user's email address will be sent as part of the LTI launch request. Depending on the tool, this may be necessary. Or, depending on the privacy rules that you're under you may need to leave this unchecked. |
+| Share Username   | If enabled the user's name will be sent as part of the LTI launch request. Same notes on privacy as above. |
+| Require Login    | If checked the plugin will only work if the user is logged in to your WordPress site. If not checked the tool will launch for all visitors.<br><br>If a user is not logged in it's treated as an anonymous launch so email addresses and usernames will not be sent regardless of the settings above. |
+| CSS Class        | If specified the iframe that's inserted will have this CSS class applied. There'snot any CSS loaded with this plugin. You'll still need to edit the CSS for yoursite for this to change how the plugin looks. |
+| CSS Style        | Anything here will be added to the style attribute on the iframe that's inserted. |
+| Allow Fullscreen | If checked the `allowfullscreen` attribute will be added to the iframe so that the LTI tool can trigger a full screen view.<br><br>This doesn't always work though. It's dependent on your browser security settingsand whether you're loading the tool from a different domain. |
 
-If these are enabled then the email or name (or both) will be shared with the
-LTI provider. This may be necessary depending on the tool. Or, you may have
-to leave it unchecked depending on the privacy rules you're working under.
 
-**Require Login**
-
-If enabled, your visitors must be logged in to your WordPress site for the LTI
-tool to launch. 
-
-If you leave this disabled and the visitor is not logged into your site when
-they launch then it's treated like an anonymous launch without username and 
-email address.
-
-#### Frame Settings
-These are settings that determine how the launched tool looks on your site. It's
-loaded into an iframe on your post or page.
-
-**CSS Class**
-
-If specified the iframe that's inserted will have this CSS class applied. There's
-not any CSS loaded with this plugin. You'll still need to edit the CSS for your
-site for this to change how the plugin looks.
-
-**CSS Style**
-
-Anything here will be added to the style attribute on the iframe that's inserted.
-
-**Allow Fullscreen**
-
-If checked the `allowfullscreen` attribute will be added to the iframe so that
-the LTI tool can trigger a full screen view.
-
-This doesn't always work though. It's dependent on your browser security settings
-and whether you're loading the tool from a different domain. 
 
 ### Adding a Tool
 
@@ -70,21 +58,35 @@ where you can create your first tool.
 
 ![Add Tool](img/screenshots/add-new-tool.png)
 
+
+
 | Settings          | Notes                                    |
 | ----------------- | ---------------------------------------- |
 | Tool Name         | This is a name that you want to use to describe the tool. It can be anything you want |
-| Base URL          | This need to match the beginning of the URL that you'll use to launch the LTI tool. It's important that you get this right. It's how the plugin knows what tool you're trying to launch. |
-| Customer Key      |                                          |
+| Base URL          | This need to match the beginning of the URL that you'll use to launch the LTI tool. <br><br>It's important that you get this right. It's how the plugin knows what tool you're trying to launch. |
+| Customer Key      | The Customer Key and Shared Secret work together to validate your launch with the tool provider. These are values that you'll get from your account on your LTI tool provider. As an example, if you're using ClassCube it's under your [user settings](https://classcube.com/documentation/lti-apps/create-key/). <br><br>It's also possible that you can leave these blank if your tool doesn't require authentication. |
 | Shared Secret     |                                          |
-| Custom Parameters |                                          |
-| Require Login     |                                          |
-| Share Username    |                                          |
-| Share Email       |                                          |
+| Custom Parameters | If the LTI tool has either required or optional custom parameters, enter them here, one per line. See your tool documentation for more information. |
+| Require Login     | Whether your visitor has to be logged in to your WordPress site for the tool to launch. |
+| Share Username    | If enabled, your visitors name will be shared with the LTI tool. This requires that they be logged in. |
+| Share Email       | If enabled, your visitors email address will be shared with the LTI tool. This requires that they are logged in to your WordPress site. |
 
+
+
+### Help & Support
+
+If you find a bug or have a feature request please [open up an issue on GitHub](https://github.com/ClassCube/wordpress-lti-consumer/issues). This was built primarily for ClassCube users to embed problems into their WordPress sites, so most of our testing was focused there. But this is something that we want to work with any LTI provider. 
+
+If you're having trouble using the plugin, please visit our [support forum](https://classcube.com/forums/) and start a thread. We like to talk. 
+
+If you'd like to learn more about ClassCube visit [ClassCube.com](https://classcube.com). And if you're a teacher take a look at [Why Teach with ClassCube](https://classcube.com/why-teach-with-classcube/).
 
 ### Follow Us
-Like social media? We're there.
+
+In to social media? We're there.
 
 [![Facebook](img/facebook-32px.png)](https://facebook.com/classcube/) 
 [![Twitter](img/twitter-32px.png)](https://twitter.com/classcube/)
 [![GitHub](img/github-32px.png)](https://github.com/ClassCube/)
+[![LinkedIn](img/linkedin-32px.png)](https://www.linkedin.com/company/16245650/)
+[![Youtube](img/youtube-32px.png)](https://www.youtube.com/channel/UCni3wW88-dLjVrMjWf8eG4A)
