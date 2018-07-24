@@ -73,6 +73,23 @@ where you can create your first tool.
 
 
 
+### Inserting a tool on a page
+
+Once you've setup your tool, you can use a shortcode to insert that tool onto a page or post.
+
+You're going to use the `[lti]` shortcode along with a `url` parameter. For example, if your LTI launch URL is `https://example.com/lti-launch.php` you would put the shortcode `[lti url=https://example.com/lti-launch.php]` into the post body.  
+
+Here's a list of the shortcode parameters you can use. Only `url` is required
+
+| Parameter          | Description                                                  |
+| ------------------ | ------------------------------------------------------------ |
+| `allow_fullscreen` | If set to 1 then your visitor can go fullscreen with the iframe content. If 0, then they cannot. This is done by including the `allowfullscreen` attribute in the iframe. |
+| `css_class`        | If present, this will be inserted into the `class` attribute on the iframe.  No default. |
+| `css_style`        | If present, this will be inserted into the `style` attribute on the iframe. Defaults to `border:none;width:100%;height:400px;`, but can be overridden globally on the settings page. |
+| `url`              | Launch URL for the LTI tool. This is the only required attribute. |
+
+
+
 ### Help & Support
 
 If you find a bug or have a feature request please [open up an issue on GitHub](https://github.com/ClassCube/wordpress-lti-consumer/issues). This was built primarily for ClassCube users to embed problems into their WordPress sites, so most of our testing was focused there. But this is something that we want to work with any LTI provider. 
