@@ -12,7 +12,7 @@ LTI_Consumer::init();
 class LTI_Consumer {
 
     public static $base_path = false;
-    private static $options = [ ];
+    private static $options = [];
     private static $default_options = [
         'share_email' => true,
         'share_username' => true,
@@ -46,7 +46,7 @@ class LTI_Consumer {
      */
     public static function admin_css( $hook ) {
         if ( $hook == 'toplevel_page_cc-lti' || $hook == 'lti-consumer_page_cc-lti-settings' ) {
-            wp_enqueue_style( 'cc-lti', plugins_url( 'css/style.css', __DIR__ ), [ ], false );
+            wp_enqueue_style( 'cc-lti', plugins_url( 'css/style.css', __DIR__ ), [], false );
         }
     }
 
@@ -162,7 +162,7 @@ class LTI_Consumer {
      * 
      * @param type $tool_info
      */
-    public static function add_tool( $tool_info = [ ] ) {
+    public static function add_tool( $tool_info = [] ) {
         if ( empty( $tool_info[ 'id' ] ) ) {
             $tool_info[ 'id' ] = uniqid();
         }
@@ -170,7 +170,7 @@ class LTI_Consumer {
         $tool_id = $tool_info[ 'id' ];
 
         if ( self::$tools === false ) {
-            self::$tools = get_option( 'classcube-lti-tools', [ ] );
+            self::$tools = get_option( 'classcube-lti-tools', [] );
         }
 
         self::$tools[ $tool_id ] = $tool_info;
@@ -183,7 +183,7 @@ class LTI_Consumer {
 
     public static function get_tool( $tool_id ) {
         if ( self::$tools === false ) {
-            self::$tools = get_option( 'classcube-lti-tools', [ ] );
+            self::$tools = get_option( 'classcube-lti-tools', [] );
         }
 
         if ( isset( self::$tools[ $tool_id ] ) ) {
@@ -201,7 +201,7 @@ class LTI_Consumer {
      * @param type $url
      */
     private static function find_tool( $url ) {
-        $tools = get_option( 'classcube-lti-tools', [ ] );
+        $tools = get_option( 'classcube-lti-tools', [] );
 
         if ( !empty( $tools ) ) {
             foreach ( $tools as $tool ) {
@@ -213,8 +213,20 @@ class LTI_Consumer {
         return false;
     }
 
-    public static function shortcode( $atts = [ ] ) {
+    public static function shortcode( $atts = [] ) {
         global $post;
+
+        $atts = shortcode_atts( [
+            'url' => '',
+            'allow_fullscreen' => self::get_setting( 'allow_fullscreen' ),
+            'css_class' => self::get_setting( 'css_class' ),
+            'css_style' => self::get_setting( 'css_style' ),
+            'template' => 'cc-lti-login'
+                ], $atts );
+
+        if ( empty( $atts[ 'url' ] ) ) {
+            return __( 'URL is required for the LTI short code', 'cc-lti' );
+        }
 
         $tool = self::find_tool( $atts[ 'url' ] );
         if ( $tool === false ) {
@@ -222,23 +234,23 @@ class LTI_Consumer {
         }
 
         if ( !empty( $tool[ 'require_login' ] ) && !is_user_logged_in() ) {
+            if ( !empty( $atts[ 'template' ] ) ) {
+                // Template specified, use it if it exists
+                if ( !preg_match( '/\.php$/i', $atts[ 'template' ] ) ) {
+                    $atts[ 'template' ] .= '.php';
+                }
+                $template = locate_template( $atts[ 'template' ] );
+                if ( !empty( $template ) ) {
+                    // It was found, use it. If it wasn't found it'll just pass through
+                    ob_start();
+                    load_template( $template );
+                    return ob_get_clean();
+                }
+            }
             return __( 'You must be logged in to launch an LTI tool', 'cc-lti' );
         }
 
-        if ( empty( $atts[ 'url' ] ) ) {
-            return __( 'URL is required for the LTI short code', 'cc-lti' );
-        }
-
-
-
-        $atts = shortcode_atts( [
-            'url' => '',
-            'allow_fullscreen' => self::get_setting( 'allow_fullscreen' ),
-            'css_class' => self::get_setting( 'css_class' ),
-            'css_style' => self::get_setting( 'css_style' )
-                ], $atts );
-
-        $html = '<iframe style="' . $atts[ 'css_style' ] . '" class="' . $atts[ 'css_class' ] . '" src="' . admin_url( 'admin-post.php?action=cc-lti-launch&tool=' . $tool[ 'id' ] . '&launch=' . urlencode( $atts[ 'url' ] ) ) . '&p=' . $post->ID . '" ' . ($atts['allow_fullscreen'] ? 'allowfullscreen' : '') . '></iframe>';
+        $html = '<iframe style="' . $atts[ 'css_style' ] . '" class="' . $atts[ 'css_class' ] . '" src="' . admin_url( 'admin-post.php?action=cc-lti-launch&tool=' . $tool[ 'id' ] . '&launch=' . urlencode( $atts[ 'url' ] ) ) . '&p=' . $post->ID . '" ' . ($atts[ 'allow_fullscreen' ] ? 'allowfullscreen' : '') . '></iframe>';
 
         return $html;
     }
@@ -269,7 +281,7 @@ class LTI_Consumer {
             'context_title' => get_bloginfo( 'name' ),
             'context_id' => get_bloginfo( 'home' ),
             'roles' => 'Learner',
-            'user_id' => md5( get_bloginfo( 'home' ) . !empty( $current_user->ID ) ? $current_user->ID : 0  ),
+            'user_id' => md5( get_bloginfo( 'home' ) . !empty( $current_user->ID ) ? $current_user->ID : 0 ),
             'launch_presentation_locale' => get_locale(),
             'tool_consumer_info_product_family_code' => 'wordpress',
             'tool_consumer_info_version' => get_bloginfo( 'version' ),
@@ -329,8 +341,7 @@ class LTI_Consumer {
             document.getElementById('cc-launch').submit();
         </script>
         <?php
-        
-        die(); 
+        die();
     }
 
     private static function generate_hmac_signature( $post_data, $secret, $launch_url ) {
